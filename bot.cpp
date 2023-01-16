@@ -72,7 +72,7 @@ Move getBestMove(Position &pos) { // profundidad minima es 1, pero se le asigna 
             score = alphaBetaMin<depth>(pos, bestScore, INF);
             pos.undo<WHITE>(move);
             // print move and score
-            std::cout << move << " " << score << std::endl;
+            // std::cout << move << " " << score << std::endl;
             if (score > bestScore) {
                 bestScore = score;
                 bestMove = move;
@@ -89,7 +89,7 @@ Move getBestMove(Position &pos) { // profundidad minima es 1, pero se le asigna 
             pos.play<BLACK>(move);
             score = alphaBetaMax<depth>(pos, -INF, bestScore);
             pos.undo<BLACK>(move);
-            std::cout << move << " " << score << std::endl;
+            //std::cout << move << " " << score << std::endl;
             if (score < bestScore) {
                 bestScore = score;
                 bestMove = move;
@@ -101,11 +101,6 @@ Move getBestMove(Position &pos) { // profundidad minima es 1, pero se le asigna 
 
 int main() {
     
-
-
-
-
-    // program that recieves a fen string, and a depth and returns the eval by the model_ser_mid.json
     initialise_all_databases();
 	zobrist::initialise_zobrist_keys();
     init_eval_tables();
