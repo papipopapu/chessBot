@@ -48,11 +48,15 @@ struct UndoInfo {
 	//double pushed on the previous move
 	Square epsq;
 
-	constexpr UndoInfo() : entry(0), captured(NO_PIECE), epsq(NO_SQUARE) {}
+	int halfmove_clock;
+
+	constexpr UndoInfo() : entry(0), captured(NO_PIECE), epsq(NO_SQUARE),
+	 halfmove_clock(0) {}
 	
 	//This preserves the entry bitboard across moves
 	UndoInfo(const UndoInfo& prev) : 
-		entry(prev.entry), captured(NO_PIECE), epsq(NO_SQUARE) {}
+		entry(prev.entry), captured(NO_PIECE), epsq(NO_SQUARE), 
+		halfmove_clock(0) {}
 };
 
 class Position {
@@ -68,7 +72,6 @@ private:
 	
 	//The current game ply (depth), incremented after each move 
 	int game_ply;
-	
 	//The zobrist hash of the position, which can be incrementally updated and rolled back after each
 	//make/unmake
 	uint64_t hash;
@@ -89,7 +92,7 @@ public:
 //gk	Position() : piece_bb{ 0 }, side_to_play(WHITE), game_ply(0), board{}, 
 //gk		hash(0), pinned(0), checkers(0) {
 	Position() : piece_bb{ 0 }, board{}, side_to_play(WHITE), game_ply(0),
-		hash(0), checkers(0), pinned(0) {
+	 hash(0), checkers(0), pinned(0) {
 		
 		//Sets all squares on the board as empty
 		for (int i = 0; i < 64; i++) board[i] = NO_PIECE;
@@ -216,7 +219,6 @@ void Position::play(const Move m) {
 	side_to_play = ~side_to_play;
 	++game_ply;
 	history[game_ply] = UndoInfo(history[game_ply - 1]);
-
 	MoveFlags type = m.flags();
 	history[game_ply].entry |= SQUARE_BB[m.to()] | SQUARE_BB[m.from()];
 
@@ -304,6 +306,11 @@ void Position::play(const Move m) {
 		
 		break;
 	}
+	if (m.is_capture() || type_of(at(m.from())) == PAWN) {
+		history[game_ply].halfmove_clock = 0;
+	} else {
+		++history[game_ply].halfmove_clock;
+	}
 }
 
 //Undos a move in the current position, rolling it back to the previous position
@@ -359,7 +366,6 @@ void Position::undo(const Move m) {
 		put_piece(history[game_ply].captured, m.to());
 		break;
 	}
-
 	side_to_play = ~side_to_play;
 	--game_ply;
 }

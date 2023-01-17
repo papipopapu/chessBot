@@ -99,77 +99,72 @@ Move getBestMove(Position &pos) { // profundidad minima es 1, pero se le asigna 
     return bestMove;
 }
 
-int main() {
-    
+int main(int argc, char **argv) {
+    // fen returned by library is shit
+    // receive depth and fen from command line, return fen after making
+    // best move
     initialise_all_databases();
 	zobrist::initialise_zobrist_keys();
     init_eval_tables();
 
-    std::string input;
-    int depth;
-    Move engine_move;
-    Position pos;
-    
-    for (;;) {
-
-        std::cin.clear();
-        std::cin.sync();
-        std::string depth_str;
-        std::cout << "Input (fen): ";
-        std::getline(std::cin, input);
-        
-        if (input == "quit") {
-            break;
-        }  else {
-            Position::set(input, pos); // this function is not well implemented
-            std::cout << "Depth: ";
-            std::getline(std::cin, input);
-            depth = std::stoi(input);
-            switch (depth) {
-            case 0:
-            engine_move = getBestMove<0U>(pos);
-            break;
-            case 1:
-            engine_move = getBestMove<1U>(pos);
-            break;
-            case 2:
-            engine_move = getBestMove<2U>(pos);
-            break;
-            case 3:
-            engine_move = getBestMove<3U>(pos);
-            break;
-            case 4:
-            engine_move = getBestMove<4U>(pos);
-            break;
-            case 5:
-            engine_move = getBestMove<5U>(pos);
-            break;
-            case 6:
-            engine_move = getBestMove<6U>(pos);
-            break;
-            case 7:
-            engine_move = getBestMove<6U>(pos);
-            break;
-            case 8:
-            engine_move = getBestMove<8U>(pos);
-            break;
-            case 9:
-            engine_move = getBestMove<9U>(pos);
-            break;
-            case 10:
-            engine_move = getBestMove<10U>(pos);
-            break;
-            default:
-            std::cout << "too deep!"<< std::endl;
-            }     
-            if (pos.turn() == WHITE) {pos.play<WHITE>(engine_move);}
-            else {pos.play<BLACK>(engine_move);}
-            std::cout << "Best move: " << engine_move << std::endl;
-
-        }
-
-        
-
+    // check commmand line arguments are correct
+    if (argc != 3) {
+        std::cout << "Usage: ./bot <depth> <fen>" << std::endl;
+        return 1;
     }
+    int depth = std::stoi(argv[1]);
+    std::string fen = argv[2];
+    
+    // create position object
+    Position pos;
+    Position::set(fen, pos);
+    Move bestMove;
+    // get best move
+   switch(depth) {
+        case 0:
+            bestMove = getBestMove<0>(pos);
+            break;
+        case 1:
+            bestMove = getBestMove<1>(pos);
+            break;
+        case 2:
+            bestMove = getBestMove<2>(pos);
+            break;
+        case 3:
+            bestMove = getBestMove<3>(pos);
+            break;
+        case 4:
+            bestMove = getBestMove<4>(pos);
+            break;
+        case 5:
+            bestMove = getBestMove<5>(pos);
+            break;
+        case 6:
+            bestMove = getBestMove<6>(pos);
+            break;
+        case 7:
+            bestMove = getBestMove<7>(pos);
+            break;
+        case 8:
+            bestMove = getBestMove<8>(pos);
+            break;
+        case 9:
+            bestMove = getBestMove<9>(pos);
+            break;
+        case 10:
+            bestMove = getBestMove<10>(pos);
+            break;
+   }
+   switch(pos.turn()) {
+        case WHITE:
+            pos.play<WHITE>(bestMove);
+            break;
+        case BLACK:
+            pos.play<BLACK>(bestMove);
+            break;
+   }
+    std::cout << pos.fen() << std::endl;
+
+   
     return 0;
 }
