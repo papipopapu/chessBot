@@ -118,6 +118,7 @@ int main(int argc, char **argv) {
     // create position object
     Position pos;
     Position::set(fen, pos);
+    std::cout << "Set fen: " << pos.fen() << std::endl;
     Move bestMove;
     // get best move
    switch(depth) {

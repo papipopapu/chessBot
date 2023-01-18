@@ -49,14 +49,15 @@ struct UndoInfo {
 	Square epsq;
 
 	int halfmove_clock;
+	int fullmove_clock;
 
 	constexpr UndoInfo() : entry(0), captured(NO_PIECE), epsq(NO_SQUARE),
-	 halfmove_clock(0) {}
+	 halfmove_clock(0), fullmove_clock(0) {}
 	
 	//This preserves the entry bitboard across moves
 	UndoInfo(const UndoInfo& prev) : 
 		entry(prev.entry), captured(NO_PIECE), epsq(NO_SQUARE), 
-		halfmove_clock(0) {}
+		halfmove_clock(0), fullmove_clock(0) {}
 };
 
 class Position {
@@ -367,7 +368,7 @@ void Position::undo(const Move m) {
 		break;
 	}
 	side_to_play = ~side_to_play;
-	--game_ply;
+	--game_ply; // must be > 0
 }
 
 

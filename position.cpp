@@ -57,14 +57,13 @@ std::string Position::fen() const {
 		if (empty != 0) fen << empty;
 		if (i > 0) fen << '/';
 	}
-
 	fen << (side_to_play == WHITE ? " w " : " b ")
 		<< (history[game_ply].entry & WHITE_OO_MASK ? "" : "K")
 		<< (history[game_ply].entry & WHITE_OOO_MASK ? "" : "Q")
 		<< (history[game_ply].entry & BLACK_OO_MASK ? "" : "k")
 		<< (history[game_ply].entry & BLACK_OOO_MASK ? "" : "q")
-		<< (history[game_ply].entry & ALL_CASTLING_MASK ? "- " : " ")
-		<< (history[game_ply].epsq == NO_SQUARE ? "- " : SQSTR[history[game_ply].epsq])
+		<< (history[game_ply].entry & ALL_CASTLING_MASK ? "-" : "")
+		<< (history[game_ply].epsq == NO_SQUARE ? " -" : " " + std::string(SQSTR[history[game_ply].epsq]))
 		<< " " <<history[game_ply].halfmove_clock << " " << int(game_ply / 2 + 1);
 
 
@@ -179,9 +178,8 @@ void Position::set(const std::string& fen, Position& p) {
 	while (idx < size && flags[idx] != ' ') {
 		token_str += flags[idx++];
 	}
-	p.game_ply = std::stoi(token_str) * 2 - 2;
-	if (p.side_to_play == BLACK) p.game_ply++;
-
+	p.history[p.game_ply].fullmove_clock = std::stoi(token_str);
+	if (p.side_to_play == BLACK) p.history[p.game_ply].fullmove_clock++;
 	//std::cout << "PLY:  " << p.game_ply << std::endl;
 	p.history[p.game_ply].epsq = epsq;
 	// no hacemos nada con el ultimo numero equisde pues si xd
