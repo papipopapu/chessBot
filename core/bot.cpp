@@ -11,7 +11,7 @@
 // Infinity value for alpha-beta search
 const int INF = 1000000;
 
-// Forward declarations for mutually recursive template functions
+// Forward declarations for template functions (required due to cross-references)
 template<unsigned int depth>
 int alphaBetaMin(Position &pos, int alpha, int beta);
 
@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
 
     // Validate command line arguments
     if (argc != 3) {
-        std::cout << "Usage: ./chessbot <depth> <fen>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <depth> <fen>" << std::endl;
         return 1;
     }
     
