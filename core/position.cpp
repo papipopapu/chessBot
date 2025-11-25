@@ -180,10 +180,7 @@ void Position::set(const std::string& fen, Position& p) {
 	}
 	p.history[p.game_ply].fullmove_clock = std::stoi(token_str);
 	if (p.side_to_play == BLACK) p.history[p.game_ply].fullmove_clock++;
-	//std::cout << "PLY:  " << p.game_ply << std::endl;
 	p.history[p.game_ply].epsq = epsq;
-	// no hacemos nada con el ultimo numero equisde pues si xd
-	//std::cout << "EPSQ: " << p.history[p.game_ply].epsq << std::endl;
 }
 	
 
